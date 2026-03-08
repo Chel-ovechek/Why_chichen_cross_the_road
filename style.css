@@ -1,68 +1,105 @@
-#header{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 10%;
-    background-color: blanchedalmond;
-}
-#gameIcon{
-    height: 100%;
-}
-
-#title{
-    width: 90%;
-    height: 100%;
-    text-align: center;
-    font-size: 4dvh;
-}
-
-#accountImage{
-    width: 7%;
-    font-size: 2.5vw;
-    background-color: blueviolet;
+/* Обнуляем отступы и настраиваем расчет размеров */
+* {
+    box-sizing: border-box; /* Чтобы границы не раздували блоки */
 }
 
 html, body {
     height: 100%;
-    margin: 0; /* чтобы не было лишних отступов */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Чтобы не было случайной прокрутки */
+    font-family: sans-serif;
     -webkit-text-size-adjust: 100%;
 }
 
-body{
+body {
     background-image: url("background.png");
-    background-size: cover
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column; /* Элементы идут строго друг под другом */
 }
 
-#gameBoard {
-    height: 80%; /* Теперь это будет 50% от 100% высоты body */
-    width: 70%;
-    margin: 0 auto;
-    border: 2px solid black;
-    background-color: aquamarine;
-    margin-top: 1%;
+/* HEADER */
+#header {
+    display: flex;
+    align-items: center; /* Центрируем всё по вертикали */
+    justify-content: space-between; /* Распределяем: иконка слева, картинка справа, текст в центре */
+    padding: 0 10px;
+    height: 8vh; /* Чуть меньше высоту, чтобы оставить место для игры */
+    background-color: rgba(253, 235, 211, 0.9); /* Полупрозрачный фон */
 }
-#footer{
-        height: 7%;
-        width: 20%;
+
+#gameIcon, #accountImage {
+    height: 80%; /* Иконки подстраиваются под высоту хедера */
+    width: auto; /* Сохраняем пропорции картинок */
+    aspect-ratio: 1/1; /* Делаем их квадратными */
+    object-fit: contain;
 }
-#levelNumber{
-    background-color: brown;
-    height: 5%;
-    width: 20%;
-    margin: auto;
-    margin-top: 1%;
-    margin-bottom: 1%;
-}
-#footer{
-    width: 100%;
-    height: 5%;
-    background-color: black;
-}
-#contacts{
-    width: 50%;
-    height: 90%;
+
+#title {
+    flex-grow: 1; /* Текст занимает всё свободное место */
+    margin: 0 10px;
     text-align: center;
-    margin: auto;
-    background-color: blue;
+    /* clamp(мин, предпочтительно, макс) - текст будет плавно менять размер */
+    font-size: clamp(1rem, 4vh, 2rem); 
+    white-space: nowrap; /* Чтобы заголовок не разбивался на 2 строки */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* GAME BOARD */
+#gameBoard {
+    /* На телефоне (узкий экран) ширина 95%, на ноуте максимум 700px */
+    width: clamp(300px, 95%, 600px); 
+    height: 65vh; /* Ограничиваем высоту, чтобы влезли уровни и футер */
+    margin: auto; /* Центрируем по горизонтали и вертикали в свободном месте */
+    border: 3px solid black;
+    background-color: aquamarine;
+    border-radius: 10px; /* Скруглим углы для красоты */
+}
+
+/* LEVEL INFO */
+#levelNumber {
+    background-color: brown;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    width: fit-content;
+    min-width: 150px;
+    margin: 10px auto;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+/* FOOTER */
+#footer {
+    height: 6vh;
+    width: 100%;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#contacts {
+    width: 60%;
+    height: 70%;
+    background-color: blue;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* АДАПТИВНОСТЬ ПОД ТЕЛЕФОНЫ (Portrait) */
+@media (max-aspect-ratio: 1/1) {
+    #gameBoard {
+        height: 50vh; /* На вертикальных экранах уменьшаем высоту поля */
+    }
+    
+    #title {
+        font-size: 1.2rem; /* Уменьшаем текст для мобилок */
+    }
+}
