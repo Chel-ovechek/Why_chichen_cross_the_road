@@ -1,15 +1,15 @@
-/* Обнуляем отступы и настраиваем расчет размеров */
 * {
-    box-sizing: border-box; /* Чтобы границы не раздували блоки */
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Чтобы не было случайной прокрутки */
+    overflow: hidden;
     font-family: sans-serif;
-    -webkit-text-size-adjust: 100%;
+    background-color: #111;
 }
 
 body {
@@ -17,121 +17,140 @@ body {
     background-size: cover;
     background-position: center;
     display: flex;
-    flex-direction: column; /* Элементы идут строго друг под другом */
+    flex-direction: column;
 }
 
 /* HEADER */
 #header {
     display: flex;
-    align-items: center; /* Центрируем всё по вертикали */
-    justify-content: space-between; /* Распределяем: иконка слева, картинка справа, текст в центре */
-    padding: 0 10px;
-    height: 8vh; /* Чуть меньше высоту, чтобы оставить место для игры */
-    background-color: rgba(253, 235, 211, 0.9); /* Полупрозрачный фон */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 8vh;
+    min-height: 50px;
+    background-color: rgba(253, 235, 211, 0.95);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    z-index: 10;
 }
 
 #gameIcon, #accountImage {
-    height: 80%; /* Иконки подстраиваются под высоту хедера */
-    width: auto; /* Сохраняем пропорции картинок */
-    aspect-ratio: 1/1; /* Делаем их квадратными */
-    object-fit: contain;
+    height: 80%;
+    width: auto;
+    aspect-ratio: 1/1;
 }
 
 #title {
-    flex-grow: 1; /* Текст занимает всё свободное место */
+    flex-grow: 1;
     margin: 0 10px;
     text-align: center;
-    /* clamp(мин, предпочтительно, макс) - текст будет плавно менять размер */
-    font-size: clamp(1rem, 4vh, 2rem); 
-    white-space: nowrap; /* Чтобы заголовок не разбивался на 2 строки */
+    font-size: clamp(1rem, 3vh, 1.8rem);
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* GAME BOARD */
-#gameBoard {
-    width: clamp(300px, 95%, 500px); /* Чуть уже для удобства */
-    height: 60vh;
-    margin: 10px auto;
-    background-color: #333;
-    display: flex;
-    justify-content: center;
-}
-
-#gameCanvas {
-    height: 100%;
-    aspect-ratio: 9 / 12; /* Более квадратный формат, чтобы меньше бежать */
-    background: #7cfc00;
-}
-
-/* Стили кнопок управления */
-#mobileControls {
+/* ГЛАВНЫЙ КОНТЕЙНЕР (Увеличили размеры здесь) */
+#gameWrapper {
+    flex: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 10px;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
 }
 
-.ctrl-row { display: flex; gap: 20px; }
+#gameBoard {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameCanvas {
+    /* Чтобы игра была большой, фиксируем высоту относительно доступного места */
+    height: 90vh; 
+    max-height: 100%; /* Но не больше контейнера */
+    max-width: 95vw;  /* Чтобы не вылезло по ширине */
+    
+    aspect-ratio: 3 / 4;
+    background: #7cfc00;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    display: block;
+}
+
+/* УПРАВЛЕНИЕ */
+#mobileControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    width: 100%;
+}
 
 .ctrl-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    background: #fff;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background: white;
     border: 2px solid #333;
-    border-radius: 10px;
-    user-select: none;
-    touch-action: manipulation;
+    border-radius: 12px;
+    box-shadow: 0 4px 0 #666;
 }
 
-.ctrl-btn:active { background: #ddd; }
+.control-group-center { display: flex; flex-direction: column; gap: 5px; }
 
-/* Скрываем кнопки на больших экранах, если хочешь, 
-но лучше оставить для универсальности */
+/* СКРЫТЬ КНОПКИ НА ПК */
+@media (pointer: fine) {
+    #mobileControls { display: none !important; }
+    /* На ПК делаем игру еще больше, так как нет кнопок снизу */
+    #gameCanvas {
+        height: 80vh; 
+    }
+}
 
-/* LEVEL INFO */
+/* ЛОКАЦИЯ И ФУТЕР */
 #levelNumber {
     background-color: brown;
     color: white;
     text-align: center;
-    padding: 5px;
+    padding: 5px 20px;
     width: fit-content;
-    min-width: 150px;
-    margin: 10px auto;
-    border-radius: 20px;
+    margin: 5px auto;
+    border-radius: 15px;
     font-weight: bold;
 }
 
-/* FOOTER */
 #footer {
     height: 6vh;
-    width: 100%;
     background-color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-#contacts {
-    width: 60%;
-    height: 70%;
-    background-color: blue;
-    color: white;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+#contacts { color: #888; font-size: 0.8rem; }
 
-/* АДАПТИВНОСТЬ ПОД ТЕЛЕФОНЫ (Portrait) */
-@media (max-aspect-ratio: 1/1) {
-    #gameBoard {
-        height: 50vh; /* На вертикальных экранах уменьшаем высоту поля */
+/* ГОРИЗОНТАЛЬНЫЙ ТЕЛЕФОН */
+@media (orientation: landscape) and (max-height: 500px) {
+    #header, #footer, #levelNumber { display: none; }
+    #gameWrapper { flex-direction: row; height: 100vh; padding: 0; }
+    #gameCanvas { height: 95vh; }
+    #mobileControls {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        justify-content: space-between;
+        align-items: flex-end;
+        pointer-events: none;
+        padding: 20px;
     }
-    
-    #title {
-        font-size: 1.2rem; /* Уменьшаем текст для мобилок */
-    }
+    .control-group-left, .control-group-right, .control-group-center { pointer-events: auto; }
+    .control-group-center { flex-direction: row; }
 }

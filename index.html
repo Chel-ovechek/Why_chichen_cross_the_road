@@ -1,37 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>WhyChichenCrossTheRoad</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div id="header">
-            <img id="gameIcon" src="Chicken.png" alt="icon">
-            <h1 id="title">Почему курица переходит дорогу?</h1>
-            <img id="accountImage" src="ava_Монтажная область 1-01.png" alt="user"> <!-- Добавьте заглушку картинки -->
-        </div>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Почему курица переходит дорогу?</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header">
+        <img id="gameIcon" src="Chicken.png" alt="icon">
+        <h1 id="title">Почему курица переходит дорогу?</h1>
+        <img id="accountImage" src="ava_Монтажная область 1-01.png" alt="user">
+    </div>
 
+    <div id="gameWrapper">
         <div id="gameBoard">
             <canvas id="gameCanvas"></canvas>
-        </div>
+        </div> 
 
+        <!-- Кнопки управления (только для мобильных) -->
         <div id="mobileControls">
-            <button class="ctrl-btn" id="btnUp">▲</button>
-            <div class="ctrl-row">
+            <div class="control-group-left">
                 <button class="ctrl-btn" id="btnLeft">◀</button>
+            </div>
+            <div class="control-group-center">
+                <button class="ctrl-btn" id="btnUp">▲</button>
                 <button class="ctrl-btn" id="btnDown">▼</button>
+            </div>
+            <div class="control-group-right">
                 <button class="ctrl-btn" id="btnRight">▶</button>
             </div>
         </div>
+    </div>
 
-        <div id="levelNumber">УРОВЕНЬ 1</div> <!-- Текст внутри -->
+    <div id="levelNumber">ЛОКАЦИЯ: ПОЛЕ</div>
 
-        <div id="footer">
-            <div id="contacts">Контакты: @mygame</div>
-        </div>
+    <div id="footer">
+        <div id="contacts">Контакты: @mygame</div>
+    </div>
 
-        <script src="script.js"></script>
-    </body>
+    <script src="script.js"></script>
+</body>
 </html>

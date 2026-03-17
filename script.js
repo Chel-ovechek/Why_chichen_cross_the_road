@@ -2,22 +2,22 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const levelText = document.getElementById('levelNumber');
 
-// Фиксированное разрешение
+// Внутреннее разрешение логики (3:4)
 const V_WIDTH = 360;
 const V_HEIGHT = 480;
 canvas.width = V_WIDTH;
 canvas.height = V_HEIGHT;
 
-const ROWS = 10; // Всего 10 шагов до победы
+const ROWS = 10;
 const COLS = 8;
 const TILE = V_HEIGHT / ROWS;
 
-let currentStage = 0; // 0-Камни, 1-Мыши, 2-Лисы, 3-Машины
+let currentStage = 0;
 const stages = [
     { name: "ПОЛЕ (КАМНИ)", type: 'static', color: '#badc58', obsColor: '#7f8c8d' },
-    { name: "ЛУГ (МЫШИ)", type: 'slow', color: '#6ab04c', obsColor: '#95afc0', speed: 1.2 },
-    { name: "ЛЕС (ЛИСЫ)", type: 'medium', color: '#4834d4', obsColor: '#e67e22', speed: 2.0 },
-    { name: "ШОССЕ (МАШИНЫ)", type: 'fast', color: '#535c68', obsColor: '#eb4d4b', speed: 3.2 }
+    { name: "ЛУГ (МЫШИ)", type: 'slow', color: '#6ab04c', obsColor: '#95afc0', speed: 1.1 },
+    { name: "ЛЕС (ЛИСЫ)", type: 'medium', color: '#4834d4', obsColor: '#e67e22', speed: 1.8 },
+    { name: "ШОССЕ (МАШИНЫ)", type: 'fast', color: '#535c68', obsColor: '#eb4d4b', speed: 2.8 }
 ];
 
 let player = { r: ROWS - 1, c: 4 };
@@ -46,11 +46,9 @@ function initStage() {
 
         if (!isSafe) {
             if (s.type === 'static') {
-                // Камни: всего 2 на ряд, легко обойти
-                lane.obs = [{c: Math.floor(Math.random()*COLS)}];
+                lane.obs = [{c: Math.floor(Math.random() * COLS)}];
             } else {
-                // Враги: 2 штуки с большим просветом
-                lane.obs = [{x: 50, w: 50}, {x: 80, w: 40}];
+                lane.obs = [{x: 40, w: 50}, {x: 220, w: 50}];
             }
         }
         lanes.push(lane);
@@ -69,8 +67,8 @@ function move(dr, dc) {
     let nC = player.c + dc;
 
     if (nR >= 0 && nR < ROWS && nC >= 0 && nC < COLS) {
-        if (lanes[nR].type === 'static' || stages[currentStage].type === 'static') {
-            if (lanes[nR].obs.some(o => o.c === nC)) return;
+        if (stages[currentStage].type === 'static' && lanes[nR].obs.some(o => o.c === nC)) {
+            return;
         }
         player.r = nR;
         player.c = nC;
@@ -79,11 +77,25 @@ function move(dr, dc) {
     if (player.r === 0) isWin = true;
 }
 
-// Кнопки
-document.getElementById('btnUp').onclick = () => move(-1, 0);
-document.getElementById('btnDown').onclick = () => move(1, 0);
-document.getElementById('btnLeft').onclick = () => move(0, -1);
-document.getElementById('btnRight').onclick = () => move(0, 1);
+function setupMobileControls() {
+    const btns = {
+        'btnUp': [-1, 0],
+        'btnDown': [1, 0],
+        'btnLeft': [0, -1],
+        'btnRight': [0, 1]
+    };
+
+    for (let id in btns) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                move(btns[id][0], btns[id][1]);
+            });
+        }
+    }
+}
+
 window.onkeydown = (e) => {
     if (e.key === 'ArrowUp') move(-1, 0);
     if (e.key === 'ArrowDown') move(1, 0);
@@ -93,7 +105,6 @@ window.onkeydown = (e) => {
 
 function update() {
     if (isGameOver || isWin) return;
-    const s = stages[currentStage];
     
     lanes.forEach((lane, r) => {
         if (lane.speed > 0) {
@@ -132,29 +143,30 @@ function draw() {
         });
     });
 
-    // Игрок
+    // Курица
     ctx.fillStyle = "yellow";
     ctx.beginPath();
     ctx.arc(player.c * tileW + tileW/2, player.r * TILE + TILE/2, TILE/2.5, 0, Math.PI*2);
     ctx.fill();
 
-    if (isGameOver) drawOverlay("БАМ! Нажми любую кнопку");
-    if (isWin) drawOverlay("ЛОКАЦИЯ ПРОЙДЕНА!", "Нажми, чтобы идти дальше");
+    if (isGameOver) drawOverlay("БАМ!", "Нажми стрелку, чтобы оживить курицу");
+    if (isWin) drawOverlay("ЛОКАЦИЯ ПРОЙДЕНА!", "Нажми стрелку, чтобы идти дальше");
 
     update();
     requestAnimationFrame(draw);
 }
 
-function drawOverlay(t1, t2 = "") {
-    ctx.fillStyle = "rgba(0,0,0,0.7)";
+function drawOverlay(t1, t2) {
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
     ctx.fillRect(0,0, V_WIDTH, V_HEIGHT);
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.font = "bold 20px Arial";
-    ctx.fillText(t1, V_WIDTH/2, V_HEIGHT/2);
-    ctx.font = "14px Arial";
+    ctx.font = "bold 24px Arial";
+    ctx.fillText(t1, V_WIDTH/2, V_HEIGHT/2 - 10);
+    ctx.font = "16px Arial";
     ctx.fillText(t2, V_WIDTH/2, V_HEIGHT/2 + 30);
 }
 
+setupMobileControls();
 initStage();
 draw();
