@@ -2,7 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const levelText = document.getElementById('levelNumber');
 
-// Внутреннее разрешение логики (3:4)
+// Внутреннее разрешение для стабильной отрисовки
 const V_WIDTH = 360;
 const V_HEIGHT = 480;
 canvas.width = V_WIDTH;
@@ -14,10 +14,10 @@ const TILE = V_HEIGHT / ROWS;
 
 let currentStage = 0;
 const stages = [
-    { name: "ПОЛЕ (КАМНИ)", type: 'static', color: '#badc58', obsColor: '#7f8c8d' },
-    { name: "ЛУГ (МЫШИ)", type: 'slow', color: '#6ab04c', obsColor: '#95afc0', speed: 1.1 },
-    { name: "ЛЕС (ЛИСЫ)", type: 'medium', color: '#4834d4', obsColor: '#e67e22', speed: 1.8 },
-    { name: "ШОССЕ (МАШИНЫ)", type: 'fast', color: '#535c68', obsColor: '#eb4d4b', speed: 2.8 }
+    { name: "ЛОКАЦИЯ: ПОЛЕ", type: 'static', color: '#badc58', obsColor: '#7f8c8d' },
+    { name: "ЛОКАЦИЯ: ЛУГ", type: 'slow', color: '#6ab04c', obsColor: '#95afc0', speed: 1.1 },
+    { name: "ЛОКАЦИЯ: ЛЕС", type: 'medium', color: '#4834d4', obsColor: '#e67e22', speed: 1.8 },
+    { name: "ЛОКАЦИЯ: ШОССЕ", type: 'fast', color: '#535c68', obsColor: '#eb4d4b', speed: 2.8 }
 ];
 
 let player = { r: ROWS - 1, c: 4 };
@@ -27,7 +27,7 @@ let isWin = false;
 
 function initStage() {
     const s = stages[currentStage];
-    levelText.innerText = `ЛОКАЦИЯ: ${s.name}`;
+    levelText.innerText = s.name;
     lanes = [];
     player.r = ROWS - 1;
     player.c = 4;
@@ -48,7 +48,7 @@ function initStage() {
             if (s.type === 'static') {
                 lane.obs = [{c: Math.floor(Math.random() * COLS)}];
             } else {
-                lane.obs = [{x: 40, w: 50}, {x: 220, w: 50}];
+                lane.obs = [{x: 40, w: 50}, {x: 120, w: 30}];
             }
         }
         lanes.push(lane);
@@ -73,18 +73,11 @@ function move(dr, dc) {
         player.r = nR;
         player.c = nC;
     }
-
     if (player.r === 0) isWin = true;
 }
 
 function setupMobileControls() {
-    const btns = {
-        'btnUp': [-1, 0],
-        'btnDown': [1, 0],
-        'btnLeft': [0, -1],
-        'btnRight': [0, 1]
-    };
-
+    const btns = {'btnUp': [-1, 0], 'btnDown': [1, 0], 'btnLeft': [0, -1], 'btnRight': [0, 1]};
     for (let id in btns) {
         const el = document.getElementById(id);
         if (el) {
@@ -105,14 +98,12 @@ window.onkeydown = (e) => {
 
 function update() {
     if (isGameOver || isWin) return;
-    
     lanes.forEach((lane, r) => {
         if (lane.speed > 0) {
             lane.obs.forEach(o => {
                 o.x += lane.speed * lane.dir;
                 if (o.x > V_WIDTH) o.x = -o.w;
                 if (o.x < -o.w) o.x = V_WIDTH;
-
                 if (player.r === r) {
                     let px = (player.c * (V_WIDTH / COLS)) + (V_WIDTH / COLS / 2);
                     if (px > o.x && px < o.x + o.w) isGameOver = true;
@@ -130,7 +121,6 @@ function draw() {
     lanes.forEach((lane, r) => {
         ctx.fillStyle = lane.safe ? '#7cfc00' : s.color;
         ctx.fillRect(0, r * TILE, V_WIDTH, TILE);
-
         ctx.fillStyle = s.obsColor;
         lane.obs.forEach(o => {
             if (s.type === 'static') {
@@ -143,14 +133,13 @@ function draw() {
         });
     });
 
-    // Курица
     ctx.fillStyle = "yellow";
     ctx.beginPath();
     ctx.arc(player.c * tileW + tileW/2, player.r * TILE + TILE/2, TILE/2.5, 0, Math.PI*2);
     ctx.fill();
 
-    if (isGameOver) drawOverlay("БАМ!", "Нажми стрелку, чтобы оживить курицу");
-    if (isWin) drawOverlay("ЛОКАЦИЯ ПРОЙДЕНА!", "Нажми стрелку, чтобы идти дальше");
+    if (isGameOver) drawOverlay("БАМ!", "Нажми кнопку");
+    if (isWin) drawOverlay("ПРОЙДЕНО!", "Нажми кнопку");
 
     update();
     requestAnimationFrame(draw);

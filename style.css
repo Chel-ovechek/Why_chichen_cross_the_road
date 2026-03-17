@@ -7,9 +7,9 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow: hidden; /* Запрещаем скролл всей страницы */
     font-family: sans-serif;
-    background-color: #111;
+    background-color: #1a1a1a;
 }
 
 body {
@@ -17,139 +17,129 @@ body {
     background-size: cover;
     background-position: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Элементы в колонку */
 }
 
-/* HEADER */
+/* HEADER - Фиксированная высота */
 #header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
     height: 8vh;
     min-height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
     background-color: rgba(253, 235, 211, 0.95);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     z-index: 10;
+    flex-shrink: 0;
 }
 
-#gameIcon, #accountImage {
-    height: 80%;
-    width: auto;
-    aspect-ratio: 1/1;
-}
-
+#gameIcon, #accountImage { height: 70%; aspect-ratio: 1/1; }
 #title {
-    flex-grow: 1;
-    margin: 0 10px;
+    flex: 1;
     text-align: center;
-    font-size: clamp(1rem, 3vh, 1.8rem);
+    font-size: clamp(0.9rem, 2.5vh, 1.4rem);
+    margin: 0 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* ГЛАВНЫЙ КОНТЕЙНЕР (Увеличили размеры здесь) */
+/* ГЛАВНЫЙ КОНТЕЙНЕР - забирает всё свободное место */
 #gameWrapper {
-    flex: 1; 
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly; /* Распределяет место между игрой и кнопками */
     width: 100%;
-    height: 100%;
-    padding: 10px;
+    overflow: hidden;
+    padding: 5px;
 }
 
 #gameBoard {
-    flex: 1;
-    width: 100%;
-    height: 100%;
+    flex: 1; /* Канвас заберет максимум места */
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    min-height: 0; /* Важно для flex-контейнеров */
 }
 
 #gameCanvas {
-    /* Чтобы игра была большой, фиксируем высоту относительно доступного места */
-    height: 90vh; 
-    max-height: 100%; /* Но не больше контейнера */
-    max-width: 95vw;  /* Чтобы не вылезло по ширине */
-    
+    max-height: 100%;
+    max-width: 100%;
     aspect-ratio: 3 / 4;
     background: #7cfc00;
-    border: 4px solid #000;
-    border-radius: 12px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    border: 3px solid #000;
+    border-radius: 10px;
     display: block;
 }
 
-/* УПРАВЛЕНИЕ */
+/* УПРАВЛЕНИЕ - На телефоне всегда внизу */
 #mobileControls {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
-    width: 100%;
-}
-
-.ctrl-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-    background: white;
-    border: 2px solid #333;
-    border-radius: 12px;
-    box-shadow: 0 4px 0 #666;
+    gap: 20px;
+    padding: 10px;
+    flex-shrink: 0; /* Кнопки не должны сжиматься */
 }
 
 .control-group-center { display: flex; flex-direction: column; gap: 5px; }
 
-/* СКРЫТЬ КНОПКИ НА ПК */
+.ctrl-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 22px;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 12px;
+}
+
+/* ПК-ВЕРСИЯ: Увеличиваем размер игры, скрываем кнопки */
 @media (pointer: fine) {
     #mobileControls { display: none !important; }
-    /* На ПК делаем игру еще больше, так как нет кнопок снизу */
     #gameCanvas {
-        height: 80vh; 
+        height: 80vh; /* На ноуте игра будет занимать 80% высоты */
     }
 }
 
 /* ЛОКАЦИЯ И ФУТЕР */
+#levelInfo { flex-shrink: 0; padding: 5px; }
 #levelNumber {
     background-color: brown;
     color: white;
     text-align: center;
-    padding: 5px 20px;
-    width: fit-content;
-    margin: 5px auto;
+    padding: 4px 15px;
     border-radius: 15px;
     font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 #footer {
-    height: 6vh;
-    background-color: #000;
+    height: 5vh;
+    min-height: 30px;
+    background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
+#contacts { color: #888; font-size: 0.75rem; }
 
-#contacts { color: #888; font-size: 0.8rem; }
-
-/* ГОРИЗОНТАЛЬНЫЙ ТЕЛЕФОН */
+/* ГОРИЗОНТАЛЬНЫЙ РЕЖИМ ТЕЛЕФОНА */
 @media (orientation: landscape) and (max-height: 500px) {
-    #header, #footer, #levelNumber { display: none; }
+    #header, #footer, #levelInfo { display: none; }
     #gameWrapper { flex-direction: row; height: 100vh; padding: 0; }
     #gameCanvas { height: 95vh; }
     #mobileControls {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        width: 100%; height: 100%;
         justify-content: space-between;
         align-items: flex-end;
+        padding: 15px;
         pointer-events: none;
-        padding: 20px;
     }
     .control-group-left, .control-group-right, .control-group-center { pointer-events: auto; }
     .control-group-center { flex-direction: row; }
